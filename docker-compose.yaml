@@ -1,0 +1,24 @@
+version: '3.8'
+services:
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:2'
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '81:81'
+      - '443:443'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:version-759821fb
+    container_name: duckdns
+    network_mode: host
+    environment:
+      - PUID=1000 
+      - PGID=1000 
+      - SUBDOMAINS=${SUBDOMAINS} #sin .duckdns.org y, si tienes más de uno, separarlos por comas
+      - TOKEN=${TOKEN}
+      - UPDATE_IP=ipv4 
+      - LOG_FILE=yes 
+    restart: unless-stopped
